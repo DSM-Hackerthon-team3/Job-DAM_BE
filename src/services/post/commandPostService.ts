@@ -21,3 +21,16 @@ export const createPostService = async (request: PostRequest) => {
     throw new Error("Post creation failed");
   }
 };
+
+export const deletePostService = async (id: number) => {
+  // if (await todo("유저 비교 함수 호출")) {
+  try {
+    await postRepository.delete(id);
+  } catch (error) {
+    console.error("게시글 삭제 실패:", error);
+    throw new Error("게시글 삭제에 실패했습니다.");
+  }
+  // } else {
+  //   throw new Error("작성자가 일치하지 않습니다.");
+  // }
+};

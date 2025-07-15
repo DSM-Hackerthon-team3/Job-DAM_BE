@@ -1,6 +1,9 @@
 import { Request, Response } from "express";
 import { PostRequest } from "../../dtos/post/request/postRequest";
-import { createPostService } from "../../services/post/commandPostService";
+import {
+  createPostService,
+  deletePostService,
+} from "../../services/post/commandPostService";
 import { validate } from "class-validator";
 
 export class PostController {
@@ -18,5 +21,11 @@ export class PostController {
     } catch (error) {
       res.status(500).json({ message: "Failed to create post" });
     }
+  }
+
+  async deletePost(req: Request, res: Response) {
+    const { id } = req.params;
+    await deletePostService(Number(id));
+    res.status(204).json({ message: "Post deleted" });
   }
 }

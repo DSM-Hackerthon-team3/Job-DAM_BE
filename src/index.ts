@@ -1,12 +1,12 @@
 import express from "express";
-import postRoutes from "./routes/user/postRoutes";
 import { AppDataSource } from "./config/data-source";
+import postRouter from "./routes/post/postRouter";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
-app.use(postRoutes);
+app.use(postRouter);
 
 app.get("/", (req, res) => {
   res.send("Server is running");
