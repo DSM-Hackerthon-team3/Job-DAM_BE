@@ -6,6 +6,7 @@ import {
 import {
   createPostService,
   deletePostService,
+  queryPostDetailService,
   updatePostService,
 } from "../../services/post/commandPostService";
 import { validate } from "class-validator";
@@ -55,6 +56,20 @@ export class PostController {
       res.status(200).json({ message: "게시글 수정에 성공했습니다." });
     } catch (error) {
       res.status(500).json({ message: "게시글 수정에 실패했습니다." });
+    }
+  }
+
+  async queryPostDetail(req: Request<{ id: string }>, res: Response) {
+    const id = Number(req.params.id);
+
+    try {
+      const post = await queryPostDetailService(id);
+      if (!post) {
+        return res.status(404).json({ message: "게시글을 찾을 수 없습니다." });
+      }
+      res.status(200).json(post);
+    } catch (error) {
+      res.status(500).json({ message: "게시글 조회에 실패했습니다." });
     }
   }
 }
