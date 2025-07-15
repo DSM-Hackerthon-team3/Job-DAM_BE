@@ -6,3 +6,8 @@ export class PostRequest {
   @Length(1, 5000)
   content!: string;
 }
+
+export class UpdatePostRequest {
+  @Length(1, 5000)
+  content!: string;
+}

@@ -1,5 +1,8 @@
 import { todo } from "node:test";
-import { PostRequest } from "../../dtos/post/request/postRequest";
+import {
+  PostRequest,
+  UpdatePostRequest,
+} from "../../dtos/post/request/postRequest";
 import { Post } from "../../entities/Post";
 import { PostRepository } from "../../repository/post/postRepository";
 
@@ -29,6 +32,22 @@ export const deletePostService = async (id: number) => {
   } catch (error) {
     console.error("게시글 삭제 실패:", error);
     throw new Error("게시글 삭제에 실패했습니다.");
+  }
+  // } else {
+  //   throw new Error("작성자가 일치하지 않습니다.");
+  // }
+};
+
+export const updatePostService = async (
+  id: number,
+  request: UpdatePostRequest
+) => {
+  // if (await todo("유저 비교 함수 호출")) {
+  try {
+    await postRepository.update(id, request.content);
+  } catch (error) {
+    console.error("게시글 수정 실패:", error);
+    throw new Error("게시글 수정에 실패했습니다.");
   }
   // } else {
   //   throw new Error("작성자가 일치하지 않습니다.");

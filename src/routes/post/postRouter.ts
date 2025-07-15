@@ -6,5 +6,6 @@ const postController = new PostController();
 
 router.post("/post", postController.createPost.bind(postController));
 router.delete("/post/:id", postController.deletePost.bind(postController));
+router.patch("/post/:id", postController.updatePost.bind(postController));
 
 export default router;
