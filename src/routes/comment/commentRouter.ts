@@ -8,5 +8,9 @@ commentRouter.post(
   "/comment",
   commentController.createComment.bind(commentController)
 );
+commentRouter.delete(
+  "/comment/:id",
+  commentController.deleteComment.bind(commentController)
+);
 
 export default commentRouter;

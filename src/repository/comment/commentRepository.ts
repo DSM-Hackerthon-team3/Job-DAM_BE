@@ -12,4 +12,8 @@ export class CommentRepository {
     await this.repository.save(comment);
     return comment;
   }
+
+  async delete(id: number): Promise<void> {
+    await this.repository.delete(id);
+  }
 }

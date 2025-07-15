@@ -1,7 +1,10 @@
 import { Request, Response } from "express";
 import { CommentRequest } from "../../dtos/comment/request/commentRequest";
 import { validate } from "class-validator";
-import { createCommentService } from "../../services/comment/commandCommentService";
+import {
+  createCommentService,
+  deleteCommentService,
+} from "../../services/comment/commandCommentService";
 
 export class CommentController {
   async createComment(req: Request<{}, {}, CommentRequest>, res: Response) {
@@ -19,6 +22,16 @@ export class CommentController {
       res.status(201).json({ message: "댓글이 성공적으로 작성되었습니다." });
     } catch (error) {
       res.status(500).json({ message: "댓글 작성에 실패했습니다." });
+    }
+  }
+
+  async deleteComment(req: Request, res: Response) {
+    const { id } = req.params;
+    try {
+      await deleteCommentService(Number(id));
+      res.status(204).json({ message: "댓글이 삭제되었습니다." });
+    } catch (error) {
+      res.status(500).json({ message: "댓글 삭제에 실패했습니다." });
     }
   }
 }

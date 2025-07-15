@@ -24,3 +24,14 @@ export const createCommentService = async (request: CommentRequest) => {
     throw new Error("댓글 작성에 실패했습니다.");
   }
 };
+
+export const deleteCommentService = async (id: number) => {
+  // if(todo("사용자와 작성자 일치 시")) {
+  try {
+    await commentRepository.delete(id);
+  } catch (error) {
+    console.error("게시글 삭제 실패:", error);
+    throw new Error("게시글 삭제에 실패했습니다.");
+  }
+  // }
+};
