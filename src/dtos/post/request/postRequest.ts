@@ -5,5 +5,4 @@ export class PostRequest {
   title!: string;
   @Length(1, 5000)
   content!: string;
-  authorId!: string;
 }

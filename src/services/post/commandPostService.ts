@@ -7,7 +7,7 @@ const postRepository = new PostRepository();
 
 export const createPostService = async (request: PostRequest) => {
   try {
-    todo("유저 아이디 검증 로직");
+    todo("토큰 기반 유저 아이디 검증 로직");
 
     const post = new Post();
     post.title = request.title;
