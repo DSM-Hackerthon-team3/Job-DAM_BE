@@ -21,8 +21,8 @@ export const createPostService = async (request: PostRequest) => {
 
     await postRepository.save(post);
   } catch (error) {
-    console.error("Post creation failed:", error);
-    throw new Error("Post creation failed");
+    console.error("게시글 작성 실패:", error);
+    throw new Error("게시글 작성에 실패했습니다.");
   }
 };
 

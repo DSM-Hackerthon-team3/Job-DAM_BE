@@ -1,9 +1,10 @@
 import { Comment } from "../../../entities/Comment";
+import { formatDate } from "../../../services/post/commandPostService";
 
 export class CommentResponse {
   id!: number;
   content!: string;
-  createdAt!: Date;
+  createdAt!: string;
   // author!: User; // 유저 정보 추가 필요
   author: string = "사람";
 
@@ -11,7 +12,7 @@ export class CommentResponse {
     const dto = new CommentResponse();
     dto.id = entity.id;
     dto.content = entity.content;
-    dto.createdAt = entity.createdAt;
+    dto.createdAt = formatDate(entity.createdAt);
     // dto.author = entity.author; // 유저 정보 추가 필요
     dto.author = "사람"; // 임시로 작성자 이름 설정
     return dto;
