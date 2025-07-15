@@ -32,8 +32,12 @@ export class PostController {
 
   async deletePost(req: Request, res: Response) {
     const { id } = req.params;
-    await deletePostService(Number(id));
-    res.status(204).json({ message: "게시글이 삭제되었습니다." });
+    try {
+      await deletePostService(Number(id));
+      res.status(204).json({ message: "게시글이 삭제되었습니다." });
+    } catch (error) {
+      res.status(500).json({ message: "게시긋 삭제에 실패했습니다." });
+    }
   }
 
   async updatePost(
