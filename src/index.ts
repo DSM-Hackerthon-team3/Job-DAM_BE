@@ -4,11 +4,14 @@ import { AppDataSource } from "./config/data-source";
 import postRouter from "./routes/post/postRouter";
 import commentRouter from "./routes/comment/commentRouter";
 import jobRouter from "./routes/job/jobRouter";
+import cors from "cors";
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+app.use(cors());
 
 app.use(express.json());
 app.use(postRouter);
