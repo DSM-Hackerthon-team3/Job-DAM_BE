@@ -1,9 +1,9 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 
 export enum SchoolLevel {
-  ELEMENTARY = '초등학교',
-  MIDDLE = '중학교',
-  HIGH = '고등학교'
+  초등학교 = '초등학교',
+  중학교 = '중학교',
+  고등학교 = '고등학교'
 }
 
 @Entity('users')

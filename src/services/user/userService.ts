@@ -4,6 +4,7 @@ import { UserRepository } from '../../repository/user/userRepository.1';
 import * as bcrypt from 'bcrypt';
 
 export class UserService {
+
   private userRepository: UserRepository;
 
   constructor(private dataSource: DataSource) {
@@ -70,6 +71,39 @@ export class UserService {
     
     const updatedUser = await this.userRepository.findByUserId(id);
     return updatedUser!;
+  }
+
+  async aptitudeTest(userId: string, answers: string[]): Promise<any> {
+    // 적성검사 로직 구현 (예: 답변 분석, 결과 반환)
+    // 현재는 간단한 더미 데이터를 반환합니다.
+    const user = await this.userRepository.findByUserId(userId);
+    if (!user) {
+      throw new Error('사용자를 찾을 수 없습니다.');
+    }
+    console.log(`User ${userId} completed aptitude test with answers: ${answers}`);
+    return { userId, result: '적성검사 결과: 당신은 개발자에 적합합니다.' };
+  }
+
+  async jobExperience(userId: string, input: string): Promise<any> {
+    // 직업 체험 로직 구현 (예: GPT 모의 대화 처리)
+    // 현재는 간단한 더미 데이터를 반환합니다.
+    const user = await this.userRepository.findByUserId(userId);
+    if (!user) {
+      throw new Error('사용자를 찾을 수 없습니다.');
+    }
+    console.log(`User ${userId} participated in job experience with input: ${input}`);
+    return { userId, response: `직업 체험 응답: ${input}에 대한 흥미로운 답변입니다.` };
+  }
+
+  async evaluateTrust(userId: string, answerId: string, rating: string): Promise<any> {
+    // 신뢰도 평가 로직 구현 (예: 답변에 대한 신뢰도 업데이트)
+    // 현재는 간단한 더미 데이터를 반환합니다.
+    const user = await this.userRepository.findByUserId(userId);
+    if (!user) {
+      throw new Error('사용자를 찾을 수 없습니다.');
+    }
+    console.log(`User ${userId} evaluated answer ${answerId} with rating: ${rating}`);
+    return { userId, answerId, rating, message: '신뢰도 평가가 완료되었습니다.' };
   }
 
   async changeUserPassword(id: string, currentPassword: string, newPassword: string): Promise<void> {

@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/DSM-Hackerthon-team3/Job-DAM_BE#readme",
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "@types/bcrypt": "^5.0.2",
     "axios": "^1.10.0",
     "bcrypt": "^6.0.0",
