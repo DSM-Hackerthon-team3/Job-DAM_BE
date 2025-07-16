@@ -7,6 +7,7 @@ import {
 } from "typeorm";
 import { Post } from "./Post";
 import { User } from "./User";
+import { Admin } from "./Admin";
 
 @Entity()
 export class Comment {
@@ -16,8 +17,8 @@ export class Comment {
   @Column("text")
   content!: string;
 
-  @ManyToOne(() => User, (user) => user.comments)
-  author!: User; // 작성자
+  @ManyToOne(() => Admin)
+  author!: Admin;
 
   @ManyToOne(() => Post, (post) => post.comments)
   post!: Post;
@@ -28,7 +29,7 @@ export class Comment {
   @Column()
   isRated: Boolean = false;
 
-  @Column({ type: 'int', nullable: true })
+  @Column({ type: "int", nullable: true })
   rating?: number;
 
   @ManyToOne(() => User, { nullable: true })

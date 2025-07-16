@@ -1,18 +1,9 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  CreateDateColumn,
-  UpdateDateColumn,
-  OneToMany,
-} from "typeorm";
-import { Comment } from './Comment';
-
-export enum SchoolLevel {
-  초등학교 = "초등학교",
-  중학교 = "중학교",
-  고등학교 = "고등학교",
-}
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
+import { Post } from "./Post";
+import { SchoolLevel } from "./enum/SchoolLevel";
+import { Gender } from "./enum/Gender";
+import { Role } from "./enum/Role";
+import { Comment } from "./Comment";
 
 @Entity("users")
 export class User {
@@ -31,14 +22,20 @@ export class User {
   })
   schoolLevel!: SchoolLevel;
 
-  @Column({ type: 'json', nullable: true })
-  aptitudeTestResult?: Record<string, any>;
+  @Column({
+    type: "enum",
+    enum: Gender,
+  })
+  gender!: Gender;
 
-  @CreateDateColumn()
-  createdAt!: Date;
+  @Column({
+    type: "enum",
+    enum: Role,
+  })
+  role: Role = Role.USER;
 
-  @UpdateDateColumn()
-  updatedAt!: Date;
+  @OneToMany(() => Post, (post) => post.author)
+  posts!: Post[];
 
   @OneToMany(() => Comment, (comment) => comment.author)
   comments!: Comment[];

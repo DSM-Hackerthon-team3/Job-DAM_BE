@@ -1,10 +1,20 @@
-import { DataSource } from 'typeorm';
-import { User, SchoolLevel } from '../../entities/User';
-import { UserRepository } from '../../repository/user/userRepository';
-import { CommentRepository } from '../../repository/comment/commentRepository';
-import { Comment } from '../../entities/Comment';
-import * as bcrypt from 'bcrypt';
-import { getAptitudeTestResult } from '../careerApiService';
+import { DataSource } from "typeorm";
+import { User } from "../../entities/User";
+import { UserRepository } from "../../repository/user/userRepository.1";
+import * as bcrypt from "bcrypt";
+import { generateAccessToken } from "../../utils/jwt";
+import { SchoolLevel } from "../../entities/enum/SchoolLevel";
+import {
+  UserTokenResponse,
+  UserMyPageResponse,
+  SimplePostResponse,
+} from "../../dtos/user/response/userResponse";
+import {
+  UserLoginRequest,
+  UserRegisterRequest,
+} from "../../dtos/user/request/userRequest";
+import { AppDataSource } from "../../config/data-source";
+import { Post } from "../../entities/Post";
 
 export class UserService {
 
@@ -16,41 +26,41 @@ export class UserService {
     this.commentRepository = new CommentRepository(dataSource);
   }
 
-  async createUser(userData: {
-    id: string;
-    password: string;
-    schoolLevel?: SchoolLevel;
-  }): Promise<User> {
-  
-    const existingUser = await this.userRepository.findByUserId(userData.id);
+  async createUser(request: UserRegisterRequest): Promise<UserTokenResponse> {
+    const existingUser = await this.userRepository.findByUserId(request.id);
     if (existingUser) {
       throw new Error('이미 존재하는 사용자 ID입니다.');
     }
 
     const saltRounds = 10;
-    const hashedPassword = await bcrypt.hash(userData.password, saltRounds);
+    const hashedPassword = await bcrypt.hash(request.password, saltRounds);
 
-    const newUser = await this.userRepository.createUser({
-      ...userData,
-      password: hashedPassword
+    const newUser = await this.userRepository.save({
+      ...request,
+      password: hashedPassword,
     });
+    const accessToken = this.generateUserAccessToken(newUser);
 
-    return newUser;
+    return { accessToken };
   }
 
-  async loginUser(id: string, password: string): Promise<User> {
+  private generateUserAccessToken(user: User): string {
+    const payload = { id: user.id, role: user.role };
+    return generateAccessToken(payload);
+  }
+
+  async loginUser(loginRequest: UserLoginRequest): Promise<UserTokenResponse> {
+    const { id, password } = loginRequest;
     const user = await this.userRepository.findByUserId(id);
-    
     if (!user) {
       throw new Error('존재하지 않는 사용자 ID입니다.');
     }
-
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       throw new Error('잘못된 비밀번호입니다.');
     }
-
-    return user;
+    const accessToken = this.generateUserAccessToken(user);
+    return { accessToken };
   }
 
   async getUserById(id: string): Promise<User> {
@@ -107,21 +117,15 @@ export class UserService {
     if (!user) {
       throw new Error('사용자를 찾을 수 없습니다.');
     }
-
-    const comment = await this.commentRepository.findById(commentId);
-    if (!comment) {
-      throw new Error('답변을 찾을 수 없습니다.');
-    }
-
-    if (comment.isRated) {
-      throw new Error('이미 평가된 답변입니다.');
-    }
-
-    comment.isRated = true;
-    comment.rating = rating;
-    comment.ratedBy = user;
-
-    return await this.commentRepository.update(comment);
+    console.log(
+      "유저 ${userId}님이 답변 ${answerId}에 대해 평점 ${rating}점을 주었습니다."
+    );
+    return {
+      userId,
+      answerId,
+      rating,
+      message: "신뢰도 평가가 완료되었습니다.",
+    };
   }
 
   async changeUserPassword(id: string, currentPassword: string, newPassword: string): Promise<void> {
@@ -139,5 +143,28 @@ export class UserService {
     const saltRounds = 10;
     const hashedNewPassword = await bcrypt.hash(newPassword, saltRounds);
     await this.userRepository.updatePassword(id, hashedNewPassword);
+  }
+
+  async existsByUserId(id: string): Promise<boolean> {
+    return await this.userRepository.existsByUserId(id);
+  }
+
+  async getUserMyPage(id: string): Promise<UserMyPageResponse> {
+    const user = await this.userRepository.findByUserId(id);
+    if (!user) throw new Error("사용자를 찾을 수 없습니다.");
+
+    const postRepo = AppDataSource.getRepository(Post);
+    const posts = await postRepo.find({
+      where: { author: user },
+      order: { createdAt: "DESC" },
+    });
+
+    const postList = posts.map(SimplePostResponse.from);
+
+    return {
+      id: user.id,
+      jobType: "학생",
+      posts: postList,
+    };
   }
 }

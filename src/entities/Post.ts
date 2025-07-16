@@ -14,14 +14,14 @@ export class Post {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column() 
+  @Column()
   title!: string;
 
   @Column("text")
   content!: string;
 
   @ManyToOne(() => Admin, (admin) => admin.posts)
-  author!: Admin; // 작성자
+  author!: Admin;
 
   @CreateDateColumn()
   createdAt!: Date;

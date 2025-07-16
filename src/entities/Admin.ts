@@ -1,37 +1,10 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  CreateDateColumn,
-  UpdateDateColumn,
-  OneToMany,
-} from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
 import { Post } from "./Post";
+import { JobPosition } from "./enum/Position";
+import { Gender } from "./enum/Gender";
+import { Role } from "./enum/Role";
 
-export enum Position {
-  교육 = '교육 / 강의',
-  보건의료 = '보건 / 의료',
-  IT = 'IT / 소프트웨어',
-  공학 = '공학 / 엔지니어링',
-  법률 = '법률 / 법조',
-  경영 = '경영 / 기획 / 마케팅',
-  금융 = '금융 / 회계',
-  예술 = '예술 / 디자인 / 미디어',
-  과학 = '과학 / 연구',
-  공공서비스 = '공공서비스 / 공무원',
-  영업 = '영업 / 유통 / 판매',
-  관광 = '관광 / 서비스 / 항공',
-  스포츠 = '스포츠 / 체육',
-  기타 = '기타',
-}
-
-export enum Gender {
-  MALE = '남성',
-  FEMALE = '여성',
-  OTHER = '기타',
-}
-
-@Entity('admins')
+@Entity("admins")
 export class Admin {
   @PrimaryGeneratedColumn()
   idx!: number;
@@ -43,26 +16,28 @@ export class Admin {
   password!: string;
 
   @Column({
-    type: 'enum',
-    enum: Position,
+    type: "enum",
+    enum: JobPosition,
   })
-  position!: Position;
-
-  @Column({ length: 100, nullable: true })
-  credentials?: string;
+  position!: JobPosition;
 
   @Column({
-    type: 'enum',
+    type: "enum",
     enum: Gender,
-    nullable: true,
   })
-  gender?: Gender;
+  gender!: Gender;
 
-  @CreateDateColumn()
-  createdAt!: Date;
+  @Column({
+    type: "enum",
+    enum: Role,
+  })
+  role: Role = Role.ADMIN;
 
-  @UpdateDateColumn()
-  updatedAt!: Date;
+  @Column()
+  point: number = 0;
+
+  @Column()
+  rateCnt: number = 0;
 
   @OneToMany(() => Post, (post) => post.author)
   posts!: Post[];

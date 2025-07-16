@@ -1,0 +1,16 @@
+export enum JobPosition {
+  EDUCATION = "교육",
+  HEALTHCARE = "보건의료",
+  IT = "IT",
+  ENGINEERING = "공학",
+  LEGAL = "법률",
+  BUSINESS = "경영",
+  FINANCE = "금융",
+  ART = "예술",
+  SCIENCE = "과학",
+  PUBLIC_SERVICE = "공무원",
+  SALES = "영업",
+  SERVICE = "서비스",
+  SPORTS = "스포츠",
+  ETC = "기타",
+}
