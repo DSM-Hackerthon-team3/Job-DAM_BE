@@ -1,23 +1,29 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from "typeorm";
 
 export enum Position {
-  교육 = '교육 / 강의',
-  보건의료 = '보건 / 의료',
-  IT = 'IT / 소프트웨어',
-  공학 = '공학 / 엔지니어링',
-  법률 = '법률 / 법조',
-  경영 = '경영 / 기획 / 마케팅',
-  금융 = '금융 / 회계',
-  예술 = '예술 / 디자인 / 미디어',
-  과학 = '과학 / 연구',
-  공공서비스 = '공공서비스 / 공무원',
-  영업 = '영업 / 유통 / 판매',
-  관광 = '관광 / 서비스 / 항공',
-  스포츠 = '스포츠 / 체육',
-  기타 = '기타',
+  EDUCATION = "교육",
+  HEALTHCARE = "보건의료",
+  IT = "IT",
+  ENGINEERING = "공학",
+  LEGAL = "법률",
+  BUSINESS = "경영",
+  FINANCE = "금융",
+  ART = "예술",
+  SCIENCE = "과학",
+  PUBLIC_SERVICE = "공무원",
+  SALES = "영업",
+  SERVICE = "서비스",
+  SPORTS = "스포츠",
+  ETC = "기타",
 }
 
-@Entity('admins')
+@Entity("admins")
 export class Admin {
   @PrimaryGeneratedColumn()
   idx!: number;
@@ -29,7 +35,7 @@ export class Admin {
   password!: string;
 
   @Column({
-    type: 'enum',
+    type: "enum",
     enum: Position,
   })
   position!: Position;
