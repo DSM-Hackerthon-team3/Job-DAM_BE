@@ -6,10 +6,10 @@ import {
 import {
   createPostService,
   deletePostService,
-  queryPostDetailService,
   updatePostService,
 } from "../../services/post/commandPostService";
 import { validate } from "class-validator";
+import { queryPostDetailService } from "../../services/post/queryPostService";
 
 export class PostController {
   async createPost(req: Request<{}, {}, PostRequest>, res: Response) {

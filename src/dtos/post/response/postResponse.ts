@@ -1,5 +1,5 @@
 import { Post } from "../../../entities/Post";
-import { formatDate } from "../../../services/post/commandPostService";
+import { formatDate } from "../../../services/post/queryPostService";
 import { CommentListResponse } from "../../comment/response/commentResponse";
 
 export class PostDetailResponse {
