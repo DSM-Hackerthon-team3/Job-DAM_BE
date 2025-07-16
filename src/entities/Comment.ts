@@ -23,4 +23,7 @@ export class Comment {
 
   @CreateDateColumn()
   createdAt!: Date;
+
+  @Column()
+  isRated: Boolean = false;
 }
