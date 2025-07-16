@@ -1,4 +1,5 @@
 import { Comment } from "../../../entities/Comment";
+import { Post } from "../../../entities/Post";
 import { formatDate } from "../../../services/post/queryPostService";
 
 export class CommentResponse {
@@ -29,4 +30,18 @@ export class CommentListResponse {
     dto.commentsCnt = dto.comments.length;
     return dto;
   }
+}
+
+export class PostResponse {
+  id: number;
+  title: string;
+  content: string;
+  commentCount: number;
+
+  constructor(post: Post, commentCount: number) {
+    this.id = post.id;
+    this.title = post.title;
+    this.content = post.content;
+    this.commentCount = commentCount;
+  }  
 }

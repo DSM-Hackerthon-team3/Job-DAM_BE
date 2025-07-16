@@ -1,8 +1,12 @@
-import { AppDataSource } from "../../config/data-source";
+import { DataSource } from 'typeorm';
 import { Comment } from "../../entities/Comment";
 
 export class CommentRepository {
-  private repository = AppDataSource.getRepository(Comment);
+  private repository;
+
+  public constructor(private dataSource: DataSource) {
+    this.repository = dataSource.getRepository(Comment);
+  }
 
   async save(data: { postId: number; content: string }): Promise<Comment> {
     const comment = this.repository.create({

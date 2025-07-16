@@ -1,6 +1,6 @@
 import { DataSource } from 'typeorm';
 import { User, SchoolLevel } from '../../entities/User';
-import { UserRepository } from '../../repository/user/userRepository.1';
+import { UserRepository } from '../../repository/user/userRepository';
 import { CommentRepository } from '../../repository/comment/commentRepository';
 import { Comment } from '../../entities/Comment';
 import * as bcrypt from 'bcrypt';
@@ -12,8 +12,8 @@ export class UserService {
   private commentRepository: CommentRepository;
 
   constructor(private dataSource: DataSource) {
-    this.userRepository = new UserRepository(dataSource);
-    this.commentRepository = new CommentRepository();
+    this.userRepository = new UserRepository();
+    this.commentRepository = new CommentRepository(dataSource);
   }
 
   async createUser(userData: {

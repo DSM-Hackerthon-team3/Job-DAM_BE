@@ -1,13 +1,20 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToMany,
+} from "typeorm";
 import { Comment } from './Comment';
 
 export enum SchoolLevel {
-  초등학교 = '초등학교',
-  중학교 = '중학교',
-  고등학교 = '고등학교'
+  초등학교 = "초등학교",
+  중학교 = "중학교",
+  고등학교 = "고등학교",
 }
 
-@Entity('users')
+@Entity("users")
 export class User {
   @PrimaryGeneratedColumn()
   idx!: number;
@@ -19,8 +26,8 @@ export class User {
   password!: string;
 
   @Column({
-    type: 'enum',
-    enum: SchoolLevel
+    type: "enum",
+    enum: SchoolLevel,
   })
   schoolLevel!: SchoolLevel;
 

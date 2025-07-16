@@ -1,13 +1,13 @@
-import { todo } from "node:test";
 import { CommentRepository } from "../../repository/comment/commentRepository";
 import {
   CommentRequest,
   RateCommentRequest,
 } from "../../dtos/comment/request/commentRequest";
 import { PostRepository } from "../../repository/post/postRepository";
+import { AppDataSource } from "../../config/data-source";
 
-const commentRepository = new CommentRepository();
-const postRepository = new PostRepository();
+const commentRepository = new CommentRepository(AppDataSource);
+const postRepository = new PostRepository(AppDataSource);
 
 export const createCommentService = async (request: CommentRequest) => {
   const post = await postRepository.findById(request.postId);

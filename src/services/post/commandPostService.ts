@@ -1,21 +1,27 @@
-import { todo } from "node:test";
 import {
   PostRequest,
   UpdatePostRequest,
 } from "../../dtos/post/request/postRequest";
 import { Post } from "../../entities/Post";
 import { PostRepository } from "../../repository/post/postRepository";
+import { AdminRepository } from "../../repository/admin/adminRepository";
 
-const postRepository = new PostRepository();
+
+import { AppDataSource } from "../../config/data-source";
+
+const postRepository = new PostRepository(AppDataSource);
+const adminRepository = new AdminRepository(AppDataSource);
 
 export const createPostService = async (request: PostRequest) => {
   try {
-    todo("토큰 기반 유저 아이디 검증 로직");
+    // 관리자 고정 조회(임시)
+    const admin = await adminRepository.findByAdminId("admin1"); // 예시: admin1 이라는 ID를 가진 관리자를 조회
+    if (!admin) throw new Error("관리자가 존재하지 않습니다.");
 
     const post = new Post();
     post.title = request.title;
     post.content = request.content;
-    // post.author = 검증된 유저
+    post.author = admin;
     post.createdAt = new Date();
 
     await postRepository.save(post);

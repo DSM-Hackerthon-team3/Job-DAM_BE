@@ -1,5 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
-import { Post } from './Post';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToMany,
+} from "typeorm";
+import { Post } from "./Post";
 
 export enum Position {
   교육 = '교육 / 강의',
@@ -60,3 +67,4 @@ export class Admin {
   @OneToMany(() => Post, (post) => post.author)
   posts!: Post[];
 }
+

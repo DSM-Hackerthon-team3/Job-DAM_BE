@@ -9,9 +9,11 @@ import * as bcrypt from 'bcrypt';
 export class AdminService {
 
   private adminRepository: AdminRepository;
+  private commentRepository: CommentRepository;
 
   constructor(private dataSource: DataSource) {
     this.adminRepository = new AdminRepository(dataSource);
+    this.commentRepository = new CommentRepository(dataSource);
   }
 
   async createAdmin(adminData: {
@@ -127,9 +129,7 @@ export class AdminService {
       throw new Error('관리자를 찾을 수 없습니다.');
     }
 
-    const commentRepository = new CommentRepository();
-
-    const newComment = await commentRepository.save({
+    const newComment = await this.commentRepository.save({
       postId: postId,
       content: commentContent,
     });
