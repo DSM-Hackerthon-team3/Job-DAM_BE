@@ -1,4 +1,7 @@
-import { PostDetailResponse, PostListResponse } from "../../dtos/post/response/postResponse";
+import {
+  PostDetailResponse,
+  PostListResponse,
+} from "../../dtos/post/response/postResponse";
 import { PostRepository } from "../../repository/post/postRepository";
 
 const postRepository = new PostRepository();
@@ -14,15 +17,20 @@ export const queryPostDetailService = async (
   id: number
 ): Promise<PostDetailResponse> => {
   const post = await postRepository.findById(id);
+  console.log(post);
+
   if (!post) {
     throw new Error("게시글을 찾을 수 없습니다.");
   }
 
-  const commentsCnt = await postRepository.countCommentsByPostId(id);
-  return PostDetailResponse.from(post, commentsCnt);
+  const commentsCnt = post.comments.length;
+  return PostDetailResponse.from(post);
 };
 
 export const queryPostListService = async (): Promise<PostListResponse[]> => {
-  const postsWithCounts = await postRepository.findAllWithCommentCount();
-  return postsWithCounts.map((row) => PostListResponse.fromRaw(row));
+  const posts = await postRepository.findAll();
+  console.log(posts);
+
+  // return posts.map((post) => PostListResponse.from(post));
+  return posts.map((post) => PostListResponse.from(post));
 };

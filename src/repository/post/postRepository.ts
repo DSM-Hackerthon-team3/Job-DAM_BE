@@ -7,23 +7,33 @@ export class PostRepository {
   private commentRepo = AppDataSource.getRepository(Comment);
 
   async findById(id: number): Promise<Post | null> {
-    return await this.postRepo.findOneBy({ id });
+    return await this.postRepo.findOne({
+      where: { id },
+      relations: ["author", "comments"],
+    });
   }
 
-  async findAllWithCommentCount(): Promise<
-    { id: number; title: string; content: string; createdAt: Date; commentsCnt: number }[]
-  > {
-    return await this.postRepo
-      .createQueryBuilder("post")
-      .leftJoin("post.comments", "comment")
-      .select("post.id", "id")
-      .addSelect("post.title", "title")
-      .addSelect("post.content", "content")
-      .addSelect("post.createdAt", "createdAt")
-      .addSelect("COUNT(comment.id)", "commentsCnt")
-      .groupBy("post.id")
-      .getRawMany();
+  async findAll(): Promise<Post[]> {
+    return await this.postRepo.find({
+      relations: ["author", "comments"],
+      order: { createdAt: "DESC" },
+    });
   }
+
+  // async findAllWithCommentCount(): Promise<
+  //   { id: number; title: string; content: string; createdAt: Date; commentsCnt: number }[]
+  // > {
+  //   return await this.postRepo
+  //     .createQueryBuilder("post")
+  //     .leftJoin("post.comments", "comment")
+  //     .select("post.id", "id")
+  //     .addSelect("post.title", "title")
+  //     .addSelect("post.content", "content")
+  //     .addSelect("post.createdAt", "createdAt")
+  //     .addSelect("COUNT(comment.id)", "commentsCnt")
+  //     .groupBy("post.id")
+  //     .getRawMany();
+  // }
 
   async countCommentsByPostId(postId: number): Promise<number> {
     return await this.commentRepo.count({

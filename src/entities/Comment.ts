@@ -6,6 +6,7 @@ import {
   ManyToOne,
 } from "typeorm";
 import { Post } from "./Post";
+import { User } from "./User";
 
 @Entity()
 export class Comment {
@@ -15,8 +16,8 @@ export class Comment {
   @Column("text")
   content!: string;
 
-  // @ManyToOne(() => User, (user) => user.comments)
-  // author: User; // 작성자
+  @ManyToOne(() => User)
+  author!: User; // 작성자
 
   @ManyToOne(() => Post, (post) => post.comments)
   post!: Post;

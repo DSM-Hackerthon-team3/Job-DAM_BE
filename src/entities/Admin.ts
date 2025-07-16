@@ -4,7 +4,9 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from "typeorm";
+import { Post } from "./Post";
 
 export enum Position {
   EDUCATION = "교육",
@@ -43,9 +45,6 @@ export class Admin {
   @Column({ length: 100, nullable: true })
   credentials?: string;
 
-  @CreateDateColumn()
-  createdAt!: Date;
-
-  @UpdateDateColumn()
-  updatedAt!: Date;
+  @OneToMany(() => Post, (post) => post.author)
+  posts!: Post[];
 }

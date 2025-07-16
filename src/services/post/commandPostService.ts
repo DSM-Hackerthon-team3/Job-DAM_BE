@@ -1,21 +1,24 @@
-import { todo } from "node:test";
 import {
   PostRequest,
   UpdatePostRequest,
 } from "../../dtos/post/request/postRequest";
 import { Post } from "../../entities/Post";
 import { PostRepository } from "../../repository/post/postRepository";
+import { UserRepository } from "../../repository/user/userRepository.1";
 
 const postRepository = new PostRepository();
+const userRepository = new UserRepository();
 
 export const createPostService = async (request: PostRequest) => {
   try {
-    todo("토큰 기반 유저 아이디 검증 로직");
+    // 유저 고정 조회(임시)
+    const user = await userRepository.findByIdx(1);
+    if (!user) throw new Error("유저가 존재하지 않습니다.");
 
     const post = new Post();
     post.title = request.title;
     post.content = request.content;
-    // post.author = 검증된 유저
+    post.author = user;
     post.createdAt = new Date();
 
     await postRepository.save(post);
