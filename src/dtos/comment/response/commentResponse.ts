@@ -1,5 +1,5 @@
 import { Comment } from "../../../entities/Comment";
-import { formatDate } from "../../../services/post/commandPostService";
+import { formatDate } from "../../../services/post/queryPostService";
 
 export class CommentResponse {
   id!: number;
