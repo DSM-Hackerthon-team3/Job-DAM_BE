@@ -9,12 +9,13 @@ import {
   updatePostService,
 } from "../../services/post/commandPostService";
 import { validate } from "class-validator";
-import { queryPostDetailService, queryPostListService } from "../../services/post/queryPostService";
-import express from 'express'
-
+import {
+  queryPostDetailService,
+  queryPostListService,
+} from "../../services/post/queryPostService";
+import express from "express";
 
 export class PostController {
-  
   async createPost(req: Request<{}, {}, PostRequest>, res: Response) {
     const postRequest = Object.assign(new PostRequest(), req.body);
 
@@ -79,18 +80,14 @@ export class PostController {
       res.status(500).json({ message: "게시글 조회에 실패했습니다." });
     }
   }
-async queryPostList(req: Request, res: Response) {
-  try {
-    // 서비스 호출
-    const posts = await queryPostListService();
+  async queryPostList(req: Request, res: Response) {
+    try {
+      const posts = await queryPostListService();
 
-    // 클라이언트에 JSON 응답
-    res.status(200).json(posts);
-  } catch (err) {
-    console.error("게시글 전체 조회 오류:", err);
-    res.status(500).json({ message: "게시글 전체 조회 중 서버 오류" });
+      res.status(200).json(posts);
+    } catch (err) {
+      console.error("게시글 전체 조회 오류:", err);
+      res.status(500).json({ message: "게시글 전체 조회 중 서버 오류" });
+    }
   }
-  }
-
 }
-
