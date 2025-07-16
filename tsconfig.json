@@ -16,14 +16,14 @@
     "removeComments": true,
     "allowSyntheticDefaultImports": true
   },
-
-    "include": [
-      "src/**/*.ts",
-      "src/**/*.tsx"
-    ],
-    "exclude": [
-      "node_modules",
-      "dist",
-      "**/*.test.ts"
-    ]
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.ts",
+    "**/*.spec.ts"
+  ]
 }
