@@ -16,4 +16,12 @@ export class CommentRepository {
   async delete(id: number): Promise<void> {
     await this.repository.delete(id);
   }
+
+  async findById(id: number): Promise<Comment | null> {
+    return this.repository.findOne({ where: { id } });
+  }
+
+  async update(comment: Comment): Promise<Comment> {
+    return this.repository.save(comment);
+  }
 }

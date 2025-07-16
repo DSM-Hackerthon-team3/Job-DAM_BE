@@ -12,5 +12,9 @@ commentRouter.delete(
   "/comment/:id",
   commentController.deleteComment.bind(commentController)
 );
+commentRouter.post(
+  "/comment/rate",
+  commentController.rateComment.bind(commentController)
+);
 
 export default commentRouter;
