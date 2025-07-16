@@ -1,16 +1,17 @@
-import { Router } from 'express';
-import adminController from '../../controllers/admin/adminController';
-import { adminAuthMiddleware } from '../../middleware/adminAuth';
+import { Router } from "express";
+import adminController from "../../controllers/admin/adminController";
+import { jwtAuthMiddleware } from "../../middleware/auth";
 
-const router = Router();
+const adminRouter = Router();
+
+adminRouter.get("/admin/exist", adminController.existsId);
 
 // 관리자 회원가입 라우트
-router.post('/register', adminController.register);
+adminRouter.post("/admin/register", adminController.register);
 
 // 관리자 로그인 라우트
-router.post('/login', adminController.login);
+adminRouter.post("/admin/login", adminController.login);
 
-// 관리자 비밀번호 변경 라우트 (인증 필요)
-router.put('/password', adminAuthMiddleware, adminController.changePassword);
+adminRouter.get("/admin/mypage", jwtAuthMiddleware, adminController.getMyPage);
 
-export default router;
+export default adminRouter;

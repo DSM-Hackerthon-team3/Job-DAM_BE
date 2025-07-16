@@ -1,6 +1,6 @@
 import { DataSource } from "typeorm";
 import { User } from "../../entities/User";
-import { UserRepository } from "../../repository/user/userRepository.1";
+import { UserRepository } from "../../repository/user/userRepository";
 import * as bcrypt from "bcrypt";
 import { generateAccessToken } from "../../utils/jwt";
 import { SchoolLevel } from "../../entities/enum/SchoolLevel";
@@ -17,19 +17,16 @@ import { AppDataSource } from "../../config/data-source";
 import { Post } from "../../entities/Post";
 
 export class UserService {
-
   private userRepository: UserRepository;
-  private commentRepository: CommentRepository;
 
   constructor(private dataSource: DataSource) {
-    this.userRepository = new UserRepository();
-    this.commentRepository = new CommentRepository(dataSource);
+    this.userRepository = new UserRepository(dataSource);
   }
 
   async createUser(request: UserRegisterRequest): Promise<UserTokenResponse> {
     const existingUser = await this.userRepository.findByUserId(request.id);
     if (existingUser) {
-      throw new Error('이미 존재하는 사용자 ID입니다.');
+      throw new Error("이미 존재하는 사용자 ID입니다.");
     }
 
     const saltRounds = 10;
@@ -53,11 +50,11 @@ export class UserService {
     const { id, password } = loginRequest;
     const user = await this.userRepository.findByUserId(id);
     if (!user) {
-      throw new Error('존재하지 않는 사용자 ID입니다.');
+      throw new Error("존재하지 않는 사용자 ID입니다.");
     }
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      throw new Error('잘못된 비밀번호입니다.');
+      throw new Error("잘못된 비밀번호입니다.");
     }
     const accessToken = this.generateUserAccessToken(user);
     return { accessToken };
@@ -65,25 +62,28 @@ export class UserService {
 
   async getUserById(id: string): Promise<User> {
     const user = await this.userRepository.findByUserId(id);
-    
+
     if (!user) {
-      throw new Error('사용자를 찾을 수 없습니다.');
+      throw new Error("사용자를 찾을 수 없습니다.");
     }
 
     return user;
   }
 
-  async updateUserProfile(id: string, profileData: {
-    schoolLevel?: SchoolLevel;
-  }): Promise<User> {
+  async updateUserProfile(
+    id: string,
+    profileData: {
+      schoolLevel?: SchoolLevel;
+    }
+  ): Promise<User> {
     const user = await this.userRepository.findByUserId(id);
-    
+
     if (!user) {
-      throw new Error('사용자를 찾을 수 없습니다.');
+      throw new Error("사용자를 찾을 수 없습니다.");
     }
 
     await this.userRepository.updateUser(id, profileData);
-    
+
     const updatedUser = await this.userRepository.findByUserId(id);
     return updatedUser!;
   }
@@ -91,12 +91,19 @@ export class UserService {
   async aptitudeTest(userId: string, answers: string[]): Promise<any> {
     const user = await this.userRepository.findByUserId(userId);
     if (!user) {
-      throw new Error('사용자를 찾을 수 없습니다.');
+      throw new Error("사용자를 찾을 수 없습니다.");
     }
 
-    const testResult = await getAptitudeTestResult({ answers });
+    // 간단한 적성검사 결과 생성
+    const testResult = {
+      answers,
+      result: "적성검사 결과: 당신은 개발자에 적합합니다.",
+      timestamp: new Date(),
+    };
 
-    await this.userRepository.updateUser(userId, { aptitudeTestResult: testResult });
+    await this.userRepository.updateUser(userId, {
+      aptitudeTestResult: testResult,
+    });
 
     return testResult;
   }
@@ -106,38 +113,54 @@ export class UserService {
     // 현재는 간단한 더미 데이터를 반환합니다.
     const user = await this.userRepository.findByUserId(userId);
     if (!user) {
-      throw new Error('사용자를 찾을 수 없습니다.');
-    }
-    console.log(`User ${userId} participated in job experience with input: ${input}`);
-    return { userId, response: `직업 체험 응답: ${input}에 대한 흥미로운 답변입니다.` };
-  }
-
-  async evaluateTrust(userId: string, commentId: number, rating: number): Promise<Comment> {
-    const user = await this.userRepository.findByUserId(userId);
-    if (!user) {
-      throw new Error('사용자를 찾을 수 없습니다.');
+      throw new Error("사용자를 찾을 수 없습니다.");
     }
     console.log(
-      "유저 ${userId}님이 답변 ${answerId}에 대해 평점 ${rating}점을 주었습니다."
+      `User ${userId} participated in job experience with input: ${input}`
     );
     return {
       userId,
-      answerId,
-      rating,
-      message: "신뢰도 평가가 완료되었습니다.",
+      response: `직업 체험 응답: ${input}에 대한 흥미로운 답변입니다.`,
     };
   }
 
-  async changeUserPassword(id: string, currentPassword: string, newPassword: string): Promise<void> {
-    const user = await this.userRepository.findByUserId(id);
-    
+  async rating(
+    userId: string,
+    commentId: number,
+    rating: number
+  ): Promise<any> {
+    const user = await this.userRepository.findByUserId(userId);
     if (!user) {
-      throw new Error('사용자를 찾을 수 없습니다.');
+      throw new Error("사용자를 찾을 수 없습니다.");
+    }
+    console.log(
+      `유저 ${userId}님이 답변 ${commentId}에 대해 평점 ${rating}점을 주었습니다.`
+    );
+    return {
+      userId,
+      commentId,
+      rating,
+      message: "평점 평가가 완료되었습니다.",
+    };
+  }
+
+  async changeUserPassword(
+    id: string,
+    currentPassword: string,
+    newPassword: string
+  ): Promise<void> {
+    const user = await this.userRepository.findByUserId(id);
+
+    if (!user) {
+      throw new Error("사용자를 찾을 수 없습니다.");
     }
 
-    const isCurrentPasswordValid = await bcrypt.compare(currentPassword, user.password);
+    const isCurrentPasswordValid = await bcrypt.compare(
+      currentPassword,
+      user.password
+    );
     if (!isCurrentPasswordValid) {
-      throw new Error('현재 비밀번호가 올바르지 않습니다.');
+      throw new Error("현재 비밀번호가 올바르지 않습니다.");
     }
 
     const saltRounds = 10;

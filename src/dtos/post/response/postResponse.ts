@@ -59,3 +59,8 @@ export class PostListResponse {
     return dto;
   }
 }
+
+export class SimplePostResponse {
+  title!: string;
+  content!: string;
+}

@@ -43,5 +43,17 @@ export class PostResponse {
     this.title = post.title;
     this.content = post.content;
     this.commentCount = commentCount;
-  }  
+  }
+}
+
+export class SimpleCommentResponse {
+  id!: number;
+  content!: string;
+
+  static from(entity: Comment): SimpleCommentResponse {
+    const dto = new SimpleCommentResponse();
+    dto.id = entity.id;
+    dto.content = entity.content;
+    return dto;
+  }
 }

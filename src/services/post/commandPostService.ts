@@ -4,24 +4,24 @@ import {
 } from "../../dtos/post/request/postRequest";
 import { Post } from "../../entities/Post";
 import { PostRepository } from "../../repository/post/postRepository";
-import { AdminRepository } from "../../repository/admin/adminRepository";
-
-
+import { UserRepository } from "../../repository/user/userRepository";
 import { AppDataSource } from "../../config/data-source";
 
 const postRepository = new PostRepository(AppDataSource);
-const adminRepository = new AdminRepository(AppDataSource);
+const userRepository = new UserRepository(AppDataSource);
 
-export const createPostService = async (request: PostRequest) => {
+export const createPostService = async (
+  request: PostRequest,
+  userId: string
+) => {
   try {
-    // 관리자 고정 조회(임시)
-    const admin = await adminRepository.findByAdminId("admin1"); // 예시: admin1 이라는 ID를 가진 관리자를 조회
-    if (!admin) throw new Error("관리자가 존재하지 않습니다.");
+    const user = await userRepository.findByUserId(userId);
+    if (!user) throw new Error("유저가 존재하지 않습니다.");
 
     const post = new Post();
     post.title = request.title;
     post.content = request.content;
-    post.author = admin;
+    post.author = user;
     post.createdAt = new Date();
 
     await postRepository.save(post);
@@ -31,31 +31,52 @@ export const createPostService = async (request: PostRequest) => {
   }
 };
 
-export const deletePostService = async (id: number) => {
-  // if (await todo("유저 비교 함수 호출")) {
+export const deletePostService = async (id: number, userId: string) => {
   try {
+    const post = await postRepository.findById(id);
+    if (!post) {
+      throw new Error("게시글을 찾을 수 없습니다.");
+    }
+
+    const user = await userRepository.findByUserId(userId);
+    if (!user) {
+      throw new Error("유저를 찾을 수 없습니다.");
+    }
+
+    if (post.author.id !== user.id) {
+      throw new Error("게시글 작성자와 일치하지 않습니다.");
+    }
+
     await postRepository.delete(id);
   } catch (error) {
     console.error("게시글 삭제 실패:", error);
-    throw new Error("게시글 삭제에 실패했습니다.");
+    throw error;
   }
-  // } else {
-  //   throw new Error("작성자가 일치하지 않습니다.");
-  // }
 };
 
 export const updatePostService = async (
   id: number,
-  request: UpdatePostRequest
+  request: UpdatePostRequest,
+  userId: string
 ) => {
-  // if (await todo("유저 비교 함수 호출")) {
   try {
+    const post = await postRepository.findById(id);
+    if (!post) {
+      throw new Error("게시글을 찾을 수 없습니다.");
+    }
+
+    const user = await userRepository.findByUserId(userId);
+    if (!user) {
+      throw new Error("유저를 찾을 수 없습니다.");
+    }
+
+    if (post.author.id !== user.id) {
+      throw new Error("게시글 작성자와 일치하지 않습니다.");
+    }
+
     await postRepository.update(id, request.content);
   } catch (error) {
     console.error("게시글 수정 실패:", error);
-    throw new Error("게시글 수정에 실패했습니다.");
+    throw error;
   }
-  // } else {
-  //   throw new Error("작성자가 일치하지 않습니다.");
-  // }
 };

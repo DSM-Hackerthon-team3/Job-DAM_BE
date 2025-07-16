@@ -1,6 +1,6 @@
-import { Repository, DataSource } from 'typeorm';
-import { Admin } from '../../entities/Admin';
-import { Position } from '../../entities/Admin';
+import { Repository, DataSource } from "typeorm";
+import { Admin } from "../../entities/Admin";
+import { JobPosition } from "../../entities/enum/Position";
 
 export class AdminRepository extends Repository<Admin> {
   constructor(private dataSource: DataSource) {
@@ -10,7 +10,7 @@ export class AdminRepository extends Repository<Admin> {
   async createAdmin(adminData: {
     id: string;
     password: string;
-    position?: Position;
+    position?: JobPosition;
     credentials?: string;
   }): Promise<Admin> {
     const admin = this.create(adminData);
@@ -42,11 +42,7 @@ export class AdminRepository extends Repository<Admin> {
     return count > 0;
   }
 
-  async findByPosition(position: Position): Promise<Admin[]> {
+  async findByPosition(position: JobPosition): Promise<Admin[]> {
     return await this.find({ where: { position } });
-  }
-
-  async findByCredentials(credentials: string): Promise<Admin[]> {
-    return await this.find({ where: { credentials } });
   }
 }

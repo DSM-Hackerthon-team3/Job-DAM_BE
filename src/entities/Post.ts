@@ -7,7 +7,7 @@ import {
   ManyToOne,
 } from "typeorm";
 import { Comment } from "./Comment";
-import { Admin } from "./Admin";
+import { User } from "./User";
 
 @Entity()
 export class Post {
@@ -20,8 +20,8 @@ export class Post {
   @Column("text")
   content!: string;
 
-  @ManyToOne(() => Admin, (admin) => admin.posts)
-  author!: Admin;
+  @ManyToOne(() => User, (user) => user.posts)
+  author!: User;
 
   @CreateDateColumn()
   createdAt!: Date;

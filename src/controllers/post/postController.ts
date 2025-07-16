@@ -27,7 +27,12 @@ export class PostController {
     }
 
     try {
-      await createPostService(req.body);
+      const user = (req as any).user;
+      if (!user || user.role !== "USER") {
+        return res.status(403).json({ message: "유저 권한이 필요합니다." });
+      }
+
+      await createPostService(req.body, user.id);
       res.status(201).json({ message: "게시글이 성공적으로 작성되었습니다." });
     } catch (error) {
       res.status(500).json({ message: "게시글 작성에 실패했습니다." });
@@ -37,10 +42,18 @@ export class PostController {
   async deletePost(req: Request, res: Response) {
     const { id } = req.params;
     try {
-      await deletePostService(Number(id));
+      const user = (req as any).user;
+      if (!user || user.role !== "USER") {
+        return res.status(403).json({ message: "유저 권한이 필요합니다." });
+      }
+
+      await deletePostService(Number(id), user.id);
       res.status(204).json({ message: "게시글이 삭제되었습니다." });
-    } catch (error) {
-      res.status(500).json({ message: "게시긋 삭제에 실패했습니다." });
+    } catch (error: any) {
+      if (error.message === "게시글 작성자와 일치하지 않습니다.") {
+        return res.status(403).json({ message: error.message });
+      }
+      res.status(500).json({ message: "게시글 삭제에 실패했습니다." });
     }
   }
 
@@ -60,9 +73,17 @@ export class PostController {
     const id = Number(req.params.id);
 
     try {
-      await updatePostService(id, updateRequest);
+      const user = (req as any).user;
+      if (!user || user.role !== "USER") {
+        return res.status(403).json({ message: "유저 권한이 필요합니다." });
+      }
+
+      await updatePostService(id, updateRequest, user.id);
       res.status(200).json({ message: "게시글 수정에 성공했습니다." });
-    } catch (error) {
+    } catch (error: any) {
+      if (error.message === "게시글 작성자와 일치하지 않습니다.") {
+        return res.status(403).json({ message: error.message });
+      }
       res.status(500).json({ message: "게시글 수정에 실패했습니다." });
     }
   }
@@ -91,5 +112,3 @@ export class PostController {
     }
   }
 }
-
-

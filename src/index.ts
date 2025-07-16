@@ -5,6 +5,8 @@ import postRouter from "./routes/post/postRouter";
 import commentRouter from "./routes/comment/commentRouter";
 import jobRouter from "./routes/job/jobRouter";
 import cors from "cors";
+import userRouter from "./routes/user/userRoutes";
+import adminRouter from "./routes/admin/authRoutes";
 
 dotenv.config();
 
@@ -17,6 +19,8 @@ app.use(express.json());
 app.use(postRouter);
 app.use(commentRouter);
 app.use(jobRouter);
+app.use(adminRouter);
+app.use(userRouter);
 
 app.get("/", (req, res) => {
   res.send("Server is running");
