@@ -1,7 +1,11 @@
+import dotenv from "dotenv";
 import express from "express";
 import { AppDataSource } from "./config/data-source";
 import postRouter from "./routes/post/postRouter";
 import commentRouter from "./routes/comment/commentRouter";
+import jobRouter from "./routes/job/jobRouter";
+
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -9,12 +13,12 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(postRouter);
 app.use(commentRouter);
+app.use(jobRouter);
 
 app.get("/", (req, res) => {
   res.send("Server is running");
 });
 
-// 등록되지 않은 URL 처리 (400 에러 반환)
 app.use((req, res, next) => {
   res.status(400).json({ message: "잘못된 요청입니다. (Invalid URL)" });
 });
