@@ -13,10 +13,18 @@ export const formatDate = (date: Date): string => {
 export const queryPostDetailService = async (
   id: number
 ): Promise<PostDetailResponse> => {
+
   const post = await postRepository.findById(id);
   if (!post) {
     throw new Error("게시글을 찾을 수 없습니다.");
   }
   const response = PostDetailResponse.from(post);
   return response;
+
+  
+};
+
+export const queryPostListService = async () => {
+  const posts = await postRepository.findAll();
+  return posts;
 };
