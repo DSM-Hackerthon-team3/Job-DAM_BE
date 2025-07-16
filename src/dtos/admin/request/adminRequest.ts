@@ -1,5 +1,5 @@
 import { IsString, Length, IsEnum, IsOptional } from 'class-validator';
-import { Position } from '../../../entities/Admin';
+import { Position, Gender } from '../../../entities/Admin';
 
 export class AdminRegisterRequest {
   @IsString()
@@ -16,6 +16,10 @@ export class AdminRegisterRequest {
   @IsOptional()
   @IsString()
   credentials?: string;
+
+  @IsOptional()
+  @IsEnum(Gender, { message: '유효한 성별을 선택해주세요.' })
+  gender?: Gender;
 }
 
 export class AdminLoginRequest {
@@ -34,6 +38,10 @@ export class AdminUpdateProfileRequest {
   @IsOptional()
   @IsString()
   credentials?: string;
+
+  @IsOptional()
+  @IsEnum(Gender, { message: '유효한 성별을 선택해주세요.' })
+  gender?: Gender;
 }
 
 export class AdminChangePasswordRequest {

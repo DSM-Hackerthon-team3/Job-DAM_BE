@@ -1,4 +1,4 @@
-import { IsString, Length, IsEnum, IsOptional, IsArray, ArrayNotEmpty } from 'class-validator';
+import { IsString, Length, IsEnum, IsOptional, IsArray, ArrayNotEmpty, IsNumber, Min, Max } from 'class-validator';
 
 export enum SchoolLevel {
   초등학교 = '초등학교',
@@ -40,11 +40,13 @@ export class JobExperienceRequest {
 }
 
 export class TrustEvaluationRequest {
-  @IsString()
-  answerId!: string; // 평가 대상 답변 ID
+  @IsNumber()
+  commentId!: number; // 평가 대상 답변 ID
 
-  @IsString()
-  rating!: string; // 신뢰도 평가 값 (예: 점수, 등급 등)
+  @IsNumber()
+  @Min(1)
+  @Max(5)
+  rating!: number; // 신뢰도 평가 값 (예: 점수, 등급 등)
 }
 
 export class UserProfileRequest {

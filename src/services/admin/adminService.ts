@@ -1,8 +1,9 @@
 import { DataSource } from 'typeorm';
-import { Admin, Position } from '../../entities/Admin';
+import { Admin, Position, Gender } from '../../entities/Admin';
 import { AdminRepository } from '../../repository/admin/adminRepository';
 import { CommentRepository } from '../../repository/comment/commentRepository';
 import { Comment } from '../../entities/Comment';
+import { Post } from '../../entities/Post'; // Import Post entity
 import * as bcrypt from 'bcrypt';
 
 export class AdminService {
@@ -18,6 +19,7 @@ export class AdminService {
     password: string;
     position: Position;
     credentials?: string;
+    gender?: Gender;
   }): Promise<Admin> {
     const existingAdmin = await this.adminRepository.findByAdminId(adminData.id);
     if (existingAdmin) {
@@ -60,11 +62,43 @@ export class AdminService {
     return admin;
   }
 
+  async getAdminProfileWithTrustScore(id: string): Promise<Admin & { trustScore: number }> {
+    const admin = await this.adminRepository.findOne({
+      where: { id },
+      relations: ['posts', 'posts.comments'],
+    });
+
+    if (!admin) {
+      throw new Error('관리자를 찾을 수 없습니다.');
+    }
+
+    let totalRating = 0;
+    let ratedCommentsCount = 0;
+
+    if (admin.posts) {
+      admin.posts.forEach((post: Post) => {
+        if (post.comments) {
+          post.comments.forEach((comment: Comment) => {
+            if (comment.isRated && comment.rating !== null && comment.rating !== undefined) {
+              totalRating += comment.rating;
+              ratedCommentsCount++;
+            }
+          });
+        }
+      });
+    }
+
+    const trustScore = ratedCommentsCount > 0 ? totalRating / ratedCommentsCount : 0;
+
+    return { ...admin, trustScore };
+  }
+
   async updateAdminProfile(
     id: string,
     profileData: {
       position?: Position;
       credentials?: string;
+      gender?: Gender;
     }
   ): Promise<Admin> {
     const admin = await this.adminRepository.findByAdminId(id);
@@ -93,10 +127,8 @@ export class AdminService {
       throw new Error('관리자를 찾을 수 없습니다.');
     }
 
-    // CommentRepository 인스턴스 생성
     const commentRepository = new CommentRepository();
 
-    // 댓글 저장
     const newComment = await commentRepository.save({
       postId: postId,
       content: commentContent,

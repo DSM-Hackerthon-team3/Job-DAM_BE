@@ -10,7 +10,7 @@ class AdminController {
   // 회원가입
   async register(req: Request, res: Response) {
     try {
-      const { id, password, position } = req.body;
+      const { id, password, position, gender } = req.body;
 
       if (!id || !password || !position) {
         return res.status(400).json({ message: '아이디, 비밀번호, 직종(position)은 필수 입력값입니다.' });
@@ -29,7 +29,7 @@ class AdminController {
         return res.status(400).json({ message: '유효하지 않은 직종(position)입니다.' });
       }
 
-      const result = await adminService.createAdmin({ id, password, position });
+      const result = await adminService.createAdmin({ id, password, position, gender });
       return res.status(201).json(result);
     } catch (error) {
       return res.status(500).json({ message: '회원가입 실패', error });
@@ -54,7 +54,7 @@ class AdminController {
   async getMyPage(req: Request, res: Response) {
     try {
       const adminId = req.params.id;
-      const profile = await adminService.getAdminById(adminId);
+      const profile = await adminService.getAdminProfileWithTrustScore(adminId);
       return res.status(200).json(profile);
     } catch (error) {
       return res.status(404).json({ message: '어드민 정보를 찾을 수 없습니다.', error });
@@ -80,11 +80,11 @@ class AdminController {
   async updateProfile(req: Request, res: Response) {
     try {
       const adminId = req.params.id;
-      const { position, credentials } = req.body;
-      if (!position && !credentials) {
+      const { position, credentials, gender } = req.body;
+      if (!position && !credentials && !gender) {
         return res.status(400).json({ message: '수정할 내용을 입력해주세요.' });
       }
-      const result = await adminService.updateAdminProfile(adminId, { position, credentials });
+      const result = await adminService.updateAdminProfile(adminId, { position, credentials, gender });
       return res.status(200).json(result);
     } catch (error) {
       return res.status(500).json({ message: '프로필 수정 실패', error });

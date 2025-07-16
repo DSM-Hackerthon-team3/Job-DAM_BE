@@ -86,7 +86,7 @@ export class UserController {
     }
     try {
       const userId = req.params.id;
-      const result = await userService.evaluateTrust(userId, trustRequest.answerId, trustRequest.rating);
+      const result = await userService.evaluateTrust(userId, trustRequest.commentId, trustRequest.rating);
       return res.status(200).json(result);
     } catch (error: any) {
       return res.status(500).json({ message: '신뢰도 평가 실패', error: error.message || error });

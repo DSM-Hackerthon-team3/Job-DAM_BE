@@ -4,22 +4,24 @@ import {
   Column,
   CreateDateColumn,
   OneToMany,
+  ManyToOne,
 } from "typeorm";
 import { Comment } from "./Comment";
+import { Admin } from "./Admin";
 
 @Entity()
 export class Post {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column()
+  @Column() 
   title!: string;
 
   @Column("text")
   content!: string;
 
-  // @ManyToOne(() => User, (user) => user.posts)
-  // author: User; // 작성자
+  @ManyToOne(() => Admin, (admin) => admin.posts)
+  author!: Admin; // 작성자
 
   @CreateDateColumn()
   createdAt!: Date;
