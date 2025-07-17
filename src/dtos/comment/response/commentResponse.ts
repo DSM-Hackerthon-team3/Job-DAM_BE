@@ -6,16 +6,16 @@ export class CommentResponse {
   id!: number;
   content!: string;
   createdAt!: string;
-  // author!: User; // 유저 정보 추가 필요
-  author: string = "사람";
+  isRated!: Boolean;
+  author!: string;
 
   static from(entity: Comment): CommentResponse {
     const dto = new CommentResponse();
     dto.id = entity.id;
     dto.content = entity.content;
     dto.createdAt = formatDate(entity.createdAt);
-    // dto.author = entity.author; // 유저 정보 추가 필요
-    dto.author = "사람"; // 임시로 작성자 이름 설정
+    dto.author = entity.author.id;
+    dto.isRated = entity.isRated;
     return dto;
   }
 }

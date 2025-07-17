@@ -1,4 +1,4 @@
-import { DataSource } from 'typeorm';
+import { DataSource } from "typeorm";
 import { Comment } from "../../entities/Comment";
 import { Post } from "../../entities/Post";
 
@@ -14,13 +14,13 @@ export class PostRepository {
   async findById(id: number): Promise<Post | null> {
     return await this.postRepo.findOne({
       where: { id },
-      relations: ["author", "comments"],
+      relations: ["author", "comments", "comments.author"],
     });
   }
 
   async findAll(): Promise<Post[]> {
     return await this.postRepo.find({
-      relations: ["author", "comments"],
+      relations: ["author", "comments", "comments.author"],
       order: { createdAt: "DESC" },
     });
   }

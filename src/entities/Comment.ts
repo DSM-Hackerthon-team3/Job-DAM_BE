@@ -17,7 +17,7 @@ export class Comment {
   @Column("text")
   content!: string;
 
-  @ManyToOne(() => Admin)
+  @ManyToOne(() => Admin, { nullable: false })
   author!: Admin;
 
   @ManyToOne(() => Post, (post) => post.comments)
@@ -29,9 +29,6 @@ export class Comment {
   @Column()
   isRated: Boolean = false;
 
-  @Column({ type: "int", nullable: true })
+  @Column({ nullable: true })
   rating?: number;
-
-  @ManyToOne(() => User, { nullable: true })
-  ratedBy?: User;
 }

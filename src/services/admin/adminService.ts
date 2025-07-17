@@ -76,44 +76,6 @@ export class AdminService {
     return admin;
   }
 
-  async getAdminProfileWithTrustScore(
-    id: string
-  ): Promise<Admin & { trustScore: number }> {
-    const admin = await this.adminRepository.findOne({
-      where: { id },
-      relations: ["posts", "posts.comments"],
-    });
-
-    if (!admin) {
-      throw new Error("관리자를 찾을 수 없습니다.");
-    }
-
-    let totalRating = 0;
-    let ratedCommentsCount = 0;
-
-    if (admin.posts) {
-      admin.posts.forEach((post: Post) => {
-        if (post.comments) {
-          post.comments.forEach((comment: Comment) => {
-            if (
-              comment.isRated &&
-              comment.rating !== null &&
-              comment.rating !== undefined
-            ) {
-              totalRating += comment.rating;
-              ratedCommentsCount++;
-            }
-          });
-        }
-      });
-    }
-
-    const trustScore =
-      ratedCommentsCount > 0 ? totalRating / ratedCommentsCount : 0;
-
-    return { ...admin, trustScore };
-  }
-
   async updateAdminProfile(
     id: string,
     profileData: {
@@ -178,10 +140,15 @@ export class AdminService {
 
     const commentList = comments.map(SimpleCommentResponse.from);
 
+    // 평균 평점 계산
+    const averageRating =
+      admin.rateCnt > 0 ? admin.totalPoint / admin.rateCnt : 0;
+
     return {
       id: admin.id,
       position: admin.position,
-      point: admin.point,
+      gender: admin.gender,
+      point: averageRating, // 평균 평점 반환
       commentList,
     };
   }

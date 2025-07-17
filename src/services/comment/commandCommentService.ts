@@ -6,14 +6,16 @@ import {
 import { PostRepository } from "../../repository/post/postRepository";
 import { UserRepository } from "../../repository/user/userRepository";
 import { AppDataSource } from "../../config/data-source";
+import { AdminRepository } from "../../repository/admin/adminRepository";
 
 const commentRepository = new CommentRepository(AppDataSource);
 const postRepository = new PostRepository(AppDataSource);
 const userRepository = new UserRepository(AppDataSource);
+const adminRepository = new AdminRepository(AppDataSource);
 
 export const createCommentService = async (
   request: CommentRequest,
-  userId: string
+  adminId: string
 ) => {
   const post = await postRepository.findById(request.postId);
   if (!post) {
@@ -21,7 +23,7 @@ export const createCommentService = async (
   }
 
   // 유저 조회
-  const user = await userRepository.findByUserId(userId);
+  const user = await adminRepository.findByAdminId(adminId);
   if (!user) {
     throw { status: 404, message: "유저를 찾을 수 없습니다." };
   }
@@ -104,23 +106,27 @@ export const rateComentService = async (
     throw { status: 409, message: "이미 처리된 댓글입니다." };
   }
 
-  // 게시글 조회
   const post = await postRepository.findById(comment.post.id);
-  if (!post) {
-    throw new Error("게시글을 찾을 수 없습니다.");
-  }
 
-  // 유저 조회
   const user = await userRepository.findByUserId(userId);
   if (!user) {
-    throw new Error("유저를 찾을 수 없습니다.");
+    throw new Error("계정을 찾을 수 없습니다.");
   }
 
-  // 게시글 작성자와 일치 여부 확인 (작성자 id와 토큰 유저 id 비교)
-  if (post.author.id !== user.id) {
+  const admin = await adminRepository.findByAdminId(comment.author.id);
+  if (!admin) {
+    throw new Error("댓글 작성자를 찾을 수 없습니다.");
+  }
+
+  if (post?.author.id !== user.id) {
     throw new Error("게시글 작성자와 일치하지 않습니다.");
   }
 
+  admin.totalPoint += request.point;
+  admin.rateCnt += 1;
+  await adminRepository.save(admin);
+
   comment.isRated = true;
+  comment.rating = request.point;
   await commentRepository.update(comment);
 };

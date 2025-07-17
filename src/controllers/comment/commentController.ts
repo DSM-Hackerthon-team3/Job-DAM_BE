@@ -7,8 +7,8 @@ import { validate } from "class-validator";
 import {
   createCommentService,
   deleteCommentService,
-  updateCommentService,
   rateComentService,
+  updateCommentService,
 } from "../../services/comment/commandCommentService";
 import { getPostByCommentIdService } from "../../services/comment/queryCommentService";
 
@@ -24,12 +24,12 @@ export class CommentController {
     }
 
     try {
-      const user = (req as any).user;
-      if (!user || user.role !== "USER") {
-        return res.status(403).json({ message: "유저 권한이 필요합니다." });
+      const admin = (req as any).user;
+      if (!admin || admin.role !== "ADMIN") {
+        return res.status(403).json({ message: "관리자 권한이 필요합니다." });
       }
 
-      await createCommentService(req.body, user.id);
+      await createCommentService(req.body, admin.id);
       res.status(201).json({ message: "댓글이 성공적으로 작성되었습니다." });
     } catch (error) {
       res.status(500).json({ message: "댓글 작성에 실패했습니다." });
@@ -39,12 +39,12 @@ export class CommentController {
   async deleteComment(req: Request, res: Response) {
     const { id } = req.params;
     try {
-      const user = (req as any).user;
-      if (!user || user.role !== "USER") {
-        return res.status(403).json({ message: "유저 권한이 필요합니다." });
+      const admin = (req as any).user;
+      if (!admin || admin.role !== "ADMIN") {
+        return res.status(403).json({ message: "관리자 권한이 필요합니다." });
       }
 
-      await deleteCommentService(Number(id), user.id);
+      await deleteCommentService(Number(id), admin.id);
       res.status(204).json({ message: "댓글이 삭제되었습니다." });
     } catch (error: any) {
       if (error.message === "댓글 작성자와 일치하지 않습니다.") {
@@ -62,12 +62,12 @@ export class CommentController {
     const { content } = req.body;
 
     try {
-      const user = (req as any).user;
-      if (!user || user.role !== "USER") {
-        return res.status(403).json({ message: "유저 권한이 필요합니다." });
+      const admin = (req as any).user;
+      if (!admin || admin.role !== "ADMIN") {
+        return res.status(403).json({ message: "관리자 권한이 필요합니다." });
       }
 
-      await updateCommentService(Number(id), content, user.id);
+      await updateCommentService(Number(id), content, admin.id);
       res.status(200).json({ message: "댓글이 수정되었습니다." });
     } catch (error: any) {
       if (error.message === "댓글 작성자와 일치하지 않습니다.") {
@@ -99,7 +99,9 @@ export class CommentController {
       if (error.message === "게시글 작성자와 일치하지 않습니다.") {
         return res.status(403).json({ message: error.message });
       }
-      res.status(500).json({ message: "평점 반영에 실패했습니다." });
+      console.log(error.message);
+
+      res.status(500).json({ message: error.message });
     }
   }
 

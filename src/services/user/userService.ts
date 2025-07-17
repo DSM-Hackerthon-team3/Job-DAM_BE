@@ -187,6 +187,7 @@ export class UserService {
     return {
       id: user.id,
       jobType: "학생",
+      gender: user.gender,
       posts: postList,
     };
   }

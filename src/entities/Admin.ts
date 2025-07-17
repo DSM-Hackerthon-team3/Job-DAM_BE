@@ -34,7 +34,7 @@ export class Admin {
   role: Role = Role.ADMIN;
 
   @Column()
-  point: number = 0;
+  totalPoint: number = 0;
 
   @Column()
   rateCnt: number = 0;
@@ -42,4 +42,3 @@ export class Admin {
   @OneToMany(() => Post, (post) => post.author)
   posts!: Post[];
 }
-

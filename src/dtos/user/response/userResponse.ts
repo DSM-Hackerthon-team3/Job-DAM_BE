@@ -1,3 +1,5 @@
+import { Gender } from "../../../entities/enum/Gender";
+
 export interface UserTokenResponse {
   accessToken: string;
 }
@@ -23,5 +25,6 @@ export class SimplePostResponse {
 export class UserMyPageResponse {
   id!: string;
   jobType: string = "학생";
+  gender!: Gender;
   posts!: SimplePostResponse[];
 }

@@ -1,4 +1,4 @@
-import { DataSource } from 'typeorm';
+import { DataSource } from "typeorm";
 import { Comment } from "../../entities/Comment";
 
 export class CommentRepository {
@@ -29,7 +29,7 @@ export class CommentRepository {
   async findById(id: number): Promise<Comment | null> {
     return this.repository.findOne({
       where: { id },
-      relations: ["post"],
+      relations: ["post", "author"],
     });
   }
 
